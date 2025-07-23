@@ -1,0 +1,8 @@
+<ul class="hypothesis-list">
+  <li *ngFor="let h of list">
+    <p class="text">{{ h.text }}</p>
+    <small class="meta">
+      erstellt am {{ h.created_at | date:'medium' }}
+    </small>
+  </li>
+</ul>

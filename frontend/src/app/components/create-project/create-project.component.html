@@ -1,0 +1,192 @@
+<div class="create-project-container" [ngClass]="formLayoutClass()">
+  <header class="project-header">
+    <h1>Neues Forschungsprojekt erstellen</h1>
+    <p class="subtitle">Teilen Sie Ihre Forschungsidee mit der Community</p>
+  </header>
+
+  <form
+    [formGroup]="projectForm"
+    (ngSubmit)="onSubmit()"
+    class="project-form"
+    data-testid="create-project-form"
+  >
+    <!-- Titel -->
+    <div class="form-field">
+      <label for="title">Projekttitel *</label>
+      <input
+        id="title"
+        type="text"
+        formControlName="title"
+        placeholder="Geben Sie einen aussagekräftigen Titel ein"
+        data-testid="project-title-input"
+        [class.error]="titleControl.invalid && titleControl.touched"
+      />
+      <div
+        *ngIf="titleControl.errors?.['required'] && titleControl.touched"
+        class="error-message"
+        data-testid="title-required-error"
+      >
+        Der Titel ist erforderlich.
+      </div>
+      <div
+        *ngIf="titleControl.errors?.['minlength'] && titleControl.touched"
+        class="error-message"
+        data-testid="title-minlength-error"
+      >
+        Der Titel muss mindestens 5 Zeichen lang sein.
+      </div>
+      <div
+        *ngIf="titleControl.errors?.['maxlength'] && titleControl.touched"
+        class="error-message"
+        data-testid="title-maxlength-error"
+      >
+        Der Titel darf höchstens 100 Zeichen lang sein.
+      </div>
+    </div>
+
+    <!-- Beschreibung -->
+    <div class="form-field">
+      <label for="description">Projektbeschreibung *</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        [placeholder]="
+          isHandset()
+            ? 'Kurze Beschreibung (min. 10 Zeichen)'
+            : 'Ausführliche Beschreibung (min. 20 Zeichen)'
+        "
+        [rows]="isHandset() ? 4 : 6"
+        data-testid="project-description-input"
+        [class.error]="
+          descriptionControl.invalid && descriptionControl.touched
+        "
+      ></textarea>
+      <div
+        *ngIf="
+          descriptionControl.errors?.['required'] &&
+          descriptionControl.touched
+        "
+        class="error-message"
+        data-testid="description-required-error"
+      >
+        Die Beschreibung ist erforderlich.
+      </div>
+      <div
+        *ngIf="
+          descriptionControl.errors?.['minlength'] &&
+          descriptionControl.touched
+        "
+        class="error-message"
+        data-testid="description-minlength-error"
+      >
+        Die Beschreibung ist zu kurz.
+      </div>
+      <div
+        *ngIf="
+          descriptionControl.errors?.['maxlength'] &&
+          descriptionControl.touched
+        "
+        class="error-message"
+        data-testid="description-maxlength-error"
+      >
+        Die Beschreibung ist zu lang.
+      </div>
+    </div>
+
+    <!-- Kategorie -->
+    <div class="form-field">
+      <label for="category">Forschungsbereich *</label>
+      <select
+        id="category"
+        formControlName="category"
+        data-testid="project-category-select"
+        [class.error]="categoryControl.invalid && categoryControl.touched"
+      >
+        <option value="">Bereich auswählen</option>
+        <option value="mathematics">Mathematik</option>
+        <option value="physics">Physik</option>
+        <option value="chemistry">Chemie</option>
+        <option value="biology">Biologie</option>
+        <option value="computer-science">Informatik</option>
+        <option value="diy">DIY &amp; Experimente</option>
+        <option value="interdisciplinary">Interdisziplinär</option>
+      </select>
+      <div
+        *ngIf="categoryControl.errors?.['required'] && categoryControl.touched"
+        class="error-message"
+        data-testid="category-required-error"
+      >
+        Bitte wählen Sie einen Forschungsbereich.
+      </div>
+    </div>
+
+    <!-- Tags -->
+    <div class="form-field">
+      <label for="tags">Tags (optional)</label>
+      <input
+        id="tags"
+        type="text"
+        formControlName="tags"
+        placeholder="Kommagetrennte Schlagwörter"
+        data-testid="project-tags-input"
+      />
+      <small class="field-hint">
+        Beispiel: forschung, hypothese, experiment
+      </small>
+    </div>
+
+    <!-- Öffentlichkeit -->
+    <div class="form-field checkbox-field">
+      <label class="checkbox-label">
+        <input
+          type="checkbox"
+          formControlName="isPublic"
+          data-testid="project-public-checkbox"
+        />
+        <span class="checkmark"></span>
+        Projekt öffentlich sichtbar machen
+      </label>
+    </div>
+
+    <!-- Kollaborationslevel -->
+    <div class="form-field">
+      <label for="collaborationLevel">Kollaborationslevel</label>
+      <select
+        id="collaborationLevel"
+        formControlName="collaborationLevel"
+        data-testid="project-collaboration-select"
+      >
+        <option value="open">Offen für alle</option>
+        <option value="restricted">Eingeschränkt</option>
+        <option value="private">Privat</option>
+      </select>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="form-actions" [ngClass]="{ 'mobile-actions': isHandset() }">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        data-testid="cancel-button"
+        (click)="onCancel()"
+        [disabled]="isSubmitting"
+      >
+        Abbrechen
+      </button>
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        data-testid="submit-button"
+        [disabled]="projectForm.invalid || isSubmitting"
+      >
+        <ng-container *ngIf="isSubmitting">
+          <span class="loading-spinner"></span> Wird erstellt…
+        </ng-container>
+        <ng-container *ngIf="!isSubmitting">
+          {{ isHandset() ? 'Erstellen' : 'Projekt erstellen' }}
+        </ng-container>
+      </button>
+    </div>
+  </form>
+</div>

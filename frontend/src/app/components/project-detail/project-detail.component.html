@@ -1,0 +1,19 @@
+<article class="project-detail-container">
+  <header>
+    <h1>{{ project.title }}</h1>
+  </header>
+
+  <section class="project-info">
+    <p>{{ project.description }}</p>
+    <p><strong>Kategorie:</strong> {{ project.category }}</p>
+    <p *ngIf="project.tags?.length">
+      <strong>Tags:</strong> {{ project.tags.join(', ') }}
+    </p>
+  </section>
+
+  <section class="project-hypotheses">
+    <h2>Hypothesen</h2>
+    <app-hypothesis-form [projectId]="project.id"></app-hypothesis-form>
+    <app-hypothesis-list [projectId]="project.id"></app-hypothesis-list>
+  </section>
+</article>

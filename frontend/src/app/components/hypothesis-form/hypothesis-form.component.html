@@ -1,0 +1,8 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="hypothesis-form">
+  <textarea formControlName="text" rows="3"
+            placeholder="Neue Hypothese formulieren…"
+            [class.error]="form.controls.text.invalid && form.controls.text.touched"></textarea>
+  <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
+    Speichern
+  </button>
+</form>

@@ -1,0 +1,17 @@
+.sidenav {
+  width: 200px;
+  float: left;
+  background: #f0f0f0;
+  height: 100vh;
+  padding: 1rem;
+}
+.sidenav.mobile {
+  position: absolute;
+  width: 100%;
+}
+.sidenav a {
+  display: block;
+  margin-bottom: 0.5rem;
+  text-decoration: none;
+  color: #333;
+}
