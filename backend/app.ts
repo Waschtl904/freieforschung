@@ -3,11 +3,12 @@ import helmet from 'helmet';
 import cors from 'cors';
 import privacyRoutes from './auth_service/src/routes/privacy.routes';
 import complianceRoutes from './project_service/src/routes/compliance.routes';
-
-
-
+import dotenv from 'dotenv';
+import path from 'path';
 
 const app = express();
+
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 // Grundlegende Security-Header
 app.use(helmet());
