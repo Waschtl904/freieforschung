@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    // Zielt auf aktuelle JS-Version für Node.js
+    "target": "ES2020",
+    // Verwende CommonJS-Module für Node-Kompatibilität
+    "module": "commonjs",
+    // Deaktiviert Prüfung von .d.ts in node_modules für schnellere Builds
+    "skipLibCheck": true,
+    // Erzwingt konsistente Groß-/Kleinschreibung der Dateinamen
+    "forceConsistentCasingInFileNames": true,
+    // Interop zwischen CommonJS und ES-Modulen
+    "esModuleInterop": true,
+    // Strikte Typprüfungen
+    "strict": true,
+    // Ausgangsverzeichnis für kompilierte JS-Dateien
+    "outDir": "./dist",
+    // Wurzelverzeichnis aller Quell-.ts-Dateien
+    "rootDir": "."
+  },
+  "include": [
+    "src/**/*",
+    "auth_service/src/**/*",
+    "project_service/src/**/*",
+    "hypothesis_service/src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts"
+  ]
+}

@@ -1,14 +1,15 @@
-from sqlmodel import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from hypothesis_service.models import Hypothesis
 
-from hypothesis_service.models import HypothesisModel
 
-async def create_hypothesis(session: AsyncSession, obj: HypothesisModel) -> HypothesisModel:
-    session.add(obj)
-    await session.commit()
-    await session.refresh(obj)
-    return obj
+async def create_hypothesis(db: AsyncSession, hyp: Hypothesis) -> Hypothesis:
+    db.add(hyp)
+    await db.commit()
+    await db.refresh(hyp)
+    return hyp
 
-async def list_hypotheses(session: AsyncSession) -> list[HypothesisModel]:
-    result = await session.exec(select(HypothesisModel))
-    return result.all()
+
+async def list_hypotheses(db: AsyncSession) -> list[Hypothesis]:
+    result = await db.execute(select(Hypothesis))
+    return result.scalars().all()

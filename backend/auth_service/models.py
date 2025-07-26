@@ -1,7 +1,12 @@
+# freieforschung-at/backend/auth_service/models.py
+
+from typing import Optional
 from sqlmodel import SQLModel, Field
-from uuid import UUID, uuid4
+
 
 class User(SQLModel, table=True):
-    id: UUID = Field(default_factory=uuid4, primary_key=True)
-    # TODO: Weitere Felder ergänzen
-
+    id: Optional[int] = Field(default=None, primary_key=True)
+    pseudonym: str
+    email: str
+    role: str = "researcher"
+    hashed_password: Optional[str] = None
