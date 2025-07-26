@@ -1,4 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from auth_service.models import User
 from passlib.context import CryptContext
 
@@ -25,5 +26,5 @@ async def create_user(session: AsyncSession, user: User) -> User:
 
 
 async def list_users(session: AsyncSession) -> list[User]:
-    result = await session.execute(User.select())  # sqlmodel gibt .select()
+    result = await session.execute(select(User))
     return result.scalars().all()

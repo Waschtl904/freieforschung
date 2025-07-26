@@ -1,4 +1,5 @@
-import pathlib, os
+import pathlib
+import os
 from dotenv import load_dotenv
 from fastapi import FastAPI, Depends
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
@@ -31,6 +32,11 @@ async def get_db() -> AsyncSession:
 async def startup() -> None:
     async with engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.create_all)
+
+
+@app.get("/health")
+async def health_check():
+    return {"status": "OK", "service": "hypothesis_service"}
 
 
 @app.post("/hypotheses", response_model=Hypothesis, status_code=201)
