@@ -1,58 +1,49 @@
-// backend/src/app.ts
-
-import express, { Application, Request, Response, NextFunction } from 'express';
+import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import { authenticate } from './middleware/authenticate';
+import privacyRoutes from './routes/privacy.routes';
+import complianceRoutes from './routes/compliance.routes';
+import hypothesisRoutes from './routes/hypothesis.routes';
 
-// Load environment variables from .env in project root
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
-const app: Application = express();
-const PORT = process.env.PORT || 3000;
+const app = express();
 
-// Middleware
+// Grundlegende Security-Header
 app.use(helmet());
+app.use(helmet.hsts({ maxAge: 31536000, includeSubDomains: true }));
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
+    styleSrc: ["'self'", "'unsafe-inline'"],
+    imgSrc: ["'self'", "data:"],
+    connectSrc: ["'self'", "https://api.freieforschung.at"]
+  }
+}));
+
+app.use(cors({ origin: ['http://localhost:4200'], credentials: true }));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(
-  cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:4200',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    credentials: true,
-  })
-);
 
-// Health‐check route
-app.get('/api/health', (req: Request, res: Response) => {
-  res.status(200).json({ status: 'ok' });
-});
-
-// Example: import and mount your service routers
-// Adjust the paths if you rename folders (e.g. scr → src)
-import privacyRoutes from './auth_service/src/routes/privacy.routes';
-import projectRoutes from './project_service/src/routes/project.routes';
-import hypothesisRoutes from './hypothesis_service/src/routes/hypothesis.routes';
-
+// Routes
 app.use('/api/privacy', privacyRoutes);
-app.use('/api/projects', projectRoutes);
-app.use('/api/hypotheses', hypothesisRoutes);
+app.use('/api/compliance', complianceRoutes);
+app.use('/api/hypothesis', hypothesisRoutes);
 
-// 404 handler
-app.use((req: Request, res: Response, next: NextFunction) => {
-  res.status(404).json({ error: 'Not Found' });
-});
+// Middleware (nach den öffentlichen Routes)
+app.use(authenticate);
 
-// Global error handler
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  console.error(err);
-  res.status(err.status || 500).json({
-    error: err.message || 'Internal Server Error',
-  });
-});
+// Health-Check
+app.get('/api/health', (_, res) => res.json({ 
+  status: 'OK', 
+  timestamp: new Date(),
+  version: '0.1.0'
+}));
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🚀 Server läuft auf Port ${PORT}`));
+
+export default app;
