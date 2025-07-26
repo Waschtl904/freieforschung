@@ -7,7 +7,10 @@ const router = Router();
 // Auskunftsrecht nach Art. 15 DSGVO
 router.get('/privacy/data', async (req: Request, res: Response) => {
   const userId = req.user?.id;
-  if (!userId) return res.status(401).json({ error: 'Nicht authentifiziert' });
+  if (!userId) {
+    return res.status(401).json({ error: 'Nicht authentifiziert' });
+  }
+
 
   const userData = await userService.getUserData(userId);
   auditLogger.log({

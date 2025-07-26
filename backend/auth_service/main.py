@@ -35,10 +35,11 @@ async def on_startup():
 async def health():
     return {"status": "OK", "service": "auth_service"}
 
-@app.post("/auth-service/users", response_model=User, status_code=201)
+
+@app.post("/auth_service/users", response_model=User, status_code=201)
 async def api_create_user(user: User, session: AsyncSession = Depends(get_session)):
     return await create_user(session, user)
 
-@app.get("/auth-service/users", response_model=list[User])
+@app.get("/auth_service/users", response_model=list[User])
 async def api_list_users(session: AsyncSession = Depends(get_session)):
     return await list_users(session)
