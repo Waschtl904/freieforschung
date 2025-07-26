@@ -41,7 +41,7 @@ async def health_check():
 
 @app.post("/hypotheses", response_model=Hypothesis, status_code=201)
 async def api_create(h: Hypothesis,
-                     db: AsyncSession = Depends(get_db)) -> Hypothesis:
+                    db: AsyncSession = Depends(get_db)) -> Hypothesis:
     return await create_hypothesis(db, h)
 
 

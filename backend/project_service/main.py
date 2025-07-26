@@ -45,7 +45,7 @@ async def health_check():
 
 @app.post("/projects", response_model=Project, status_code=201)
 async def api_create_project(p: Project,
-                             db: AsyncSession = Depends(get_db)) -> Project:
+                            db: AsyncSession = Depends(get_db)) -> Project:
     return await create_project(db, p)
 
 
