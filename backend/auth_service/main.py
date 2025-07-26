@@ -1,40 +1,46 @@
 import os
-from fastapi import FastAPI, Depends
-from sqlmodel import SQLModel
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+import pathlib
 from dotenv import load_dotenv
-
-# Absolute Importe aus dem Package auth_service
+from fastapi import FastAPI, Depends, HTTPException
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
+from sqlmodel import SQLModel
 from auth_service.models import User
 from auth_service.crud import create_user, list_users
 
-# Umgebungsvariablen aus .env laden
-load_dotenv()
-DATABASE_URL = os.getenv('DATABASE_URL')
+# .env im Projekt-Root laden
+ROOT_DIR = pathlib.Path(__file__).resolve().parents[2]
+load_dotenv(ROOT_DIR / ".env")
 
-# Async-SQLAlchemy-Engine erstellen
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError(f"DATABASE_URL fehlt – bitte .env prüfen (Pfad: {ROOT_DIR / '.env'})")
+
+# Async-Engine und Sessionmaker konfigurieren
 engine = create_async_engine(DATABASE_URL, echo=True)
+SessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
 
-# Dependency: Liefert pro Request eine AsyncSession
+app = FastAPI(title="auth_service")
+
+
 async def get_session() -> AsyncSession:
-    async with AsyncSession(engine) as session:
+    async with SessionLocal() as session:
         yield session
 
-# FastAPI-App initialisieren
-app = FastAPI(title='auth-service')
 
-# Beim Start die Datenbanktabellen anlegen
-@app.on_event('startup')
+@app.on_event("startup")
 async def on_startup():
+    # Tabellen erstellen
     async with engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.create_all)
 
-# Endpoint zum Anlegen eines neuen Users
-@app.post('/auth-service/', response_model=User, status_code=201)
-async def api_create(obj: User, session: AsyncSession = Depends(get_session)):
-    return await create_user(session, obj)
 
-# Endpoint zum Auflisten aller Users
-@app.get('/auth-service/', response_model=list[User])
-async def api_list(session: AsyncSession = Depends(get_session)):
+@app.post("/auth-service/users", response_model=User, status_code=201)
+async def api_create_user(user: User, session: AsyncSession = Depends(get_session)):
+    created = await create_user(session, user)
+    return created
+
+
+@app.get("/auth-service/users", response_model=list[User])
+async def api_list_users(session: AsyncSession = Depends(get_session)):
     return await list_users(session)
