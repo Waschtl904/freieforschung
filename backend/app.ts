@@ -6,6 +6,7 @@ import complianceRoutes from './project_service/src/routes/compliance.routes';
 import hypothesisRoutes from './hypothesis_service/src/routes/hypothesis.routes';
 import dotenv from 'dotenv';
 import path from 'path';
+import { authenticate } from './auth_service/src/middleware/authenticate';
 
 const app = express();
 
@@ -31,7 +32,7 @@ app.use(express.json());
 app.use('/api/privacy', privacyRoutes);
 app.use('/api/compliance', complianceRoutes);
 app.use('/api/hypothesis', hypothesisRoutes);
-
+app.use(authenticate);
 // Health-Check
 app.get('/health', (_, res) => res.json({ status: 'OK', ts: new Date() }));
 
