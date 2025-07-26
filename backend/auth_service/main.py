@@ -35,6 +35,11 @@ async def on_startup():
         await conn.run_sync(SQLModel.metadata.create_all)
 
 
+@app.get("/health")
+async def health_check():
+    return {"status": "OK", "service": "auth_service"}
+
+
 @app.post("/auth-service/users", response_model=User, status_code=201)
 async def api_create_user(user: User, session: AsyncSession = Depends(get_session)):
     created = await create_user(session, user)

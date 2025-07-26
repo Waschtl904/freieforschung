@@ -36,6 +36,11 @@ async def on_startup() -> None:
         await conn.run_sync(SQLModel.metadata.create_all)
 
 
+@app.get("/health")
+async def health_check():
+    return {"status": "OK", "service": "project_service"}
+
+
 # ---------- Endpunkte ----------
 
 @app.post("/projects", response_model=Project, status_code=201)
