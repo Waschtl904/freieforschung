@@ -11,7 +11,7 @@ from models import User
 from crud import create_user, list_users
 
 # .env im Projekt-Root laden
-ROOT_DIR = pathlib.Path(__file__).resolve().parents[2]
+ROOT_DIR = pathlib.Path(__file__).resolve().parent
 load_dotenv(ROOT_DIR / ".env")
 
 DATABASE_URL = os.getenv("DATABASE_URL")

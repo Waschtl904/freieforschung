@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   db:
-    image: postgres:14
+    image: postgres:17
     restart: always
     env_file:
       - .env
@@ -26,10 +26,11 @@ services:
   auth_service:
     build:
       context: ./backend/auth_service
+      dockerfile: Dockerfile
     env_file:
       - ./backend/auth_service/.env
-    ports:
-      - "8000:8000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
     depends_on:
       - db
     networks:
@@ -39,15 +40,16 @@ services:
       - -c
       - |
         ./wait-for-it.sh db:5432 --timeout=30 --strict -- \
-        uvicorn auth_service.main:app --host 0.0.0.0 --port 8000
+        uvicorn main:app --host 0.0.0.0 --port 8000
 
   project_service:
     build:
       context: ./backend/project_service
+      dockerfile: Dockerfile
     env_file:
       - ./backend/project_service/.env
-    ports:
-      - "8001:8001"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
     depends_on:
       - db
     networks:
@@ -57,15 +59,16 @@ services:
       - -c
       - |
         ./wait-for-it.sh db:5432 --timeout=30 --strict -- \
-        uvicorn project_service.main:app --host 0.0.0.0 --port 8001
+        uvicorn main:app --host 0.0.0.0 --port 8001
 
   hypothesis_service:
     build:
       context: ./backend/hypothesis_service
+      dockerfile: Dockerfile
     env_file:
       - ./backend/hypothesis_service/.env
-    ports:
-      - "8002:8002"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
     depends_on:
       - db
     networks:
@@ -75,7 +78,7 @@ services:
       - -c
       - |
         ./wait-for-it.sh db:5432 --timeout=30 --strict -- \
-        uvicorn hypothesis_service.main:app --host 0.0.0.0 --port 8002
+        uvicorn main:app --host 0.0.0.0 --port 8002
 
 networks:
   freieforschung-network:
